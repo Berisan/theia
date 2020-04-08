@@ -70,6 +70,8 @@ env:
   global:
     - CXX=g++-4.8
     - NODE_OPTIONS="--max_old_space_size=4096"
+    - CC=arm-linux-gnueabihf-gcc
+    - SETARCH="setarch linux32 --verbose --32bit"
 addons:
   apt:
     update: true
@@ -92,6 +94,12 @@ before_install:
     fi
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
   - export PATH=$HOME/.yarn/bin:$PATH
+  - sudo dpkg --add-architecture armhf
+  - sudo apt-get update -yq
+  - |-
+    sudo apt-get -yq install \
+      crossbuild-essential-armhf \
+      libc6:armhf
 install:
   - THEIA_SKIP_NPM_PREPARE=1 yarn install --skip-integrity-check
   - npx electron-replace-ffmpeg # re-download library (in case it was cached)
